@@ -1,0 +1,83 @@
+---
+title: "ATE.ERROR.Y: Function for Estimating Average Treatment Effect (ATE) with Misclassification in Y"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{ATE.ERROR.Y: Function for Estimating Average Treatment Effect (ATE) with Misclassification in Y}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+library(ggplot2)
+```
+
+## Introduction
+
+This vignette demonstrates the usage of the ATE.ERROR.Y function in the ATE.ERROR package. The ATE.ERROR.Y function provides a method for estimating the Average Treatment Effect (ATE) considering both naive and true estimates, and bootstrapping to assess variability.
+
+## Generating Simulated Data
+
+First, we generate our simulated data using the data(Simulated_data) syntax.
+
+```{r}
+library(ATE.ERROR)
+set.seed(1)
+data(Simulated_data)
+Y_star <- Simulated_data$Y_star
+A <- Simulated_data$T
+Z <- Simulated_data$Z
+X_star <- Simulated_data$X_star
+X <- Simulated_data$X
+Y <- Simulated_data$Y
+p11 <- 0.8
+p10 <- 0.2
+bootstrap_number <- 1000
+```
+
+In this section, we load the required libraries and set the seed for reproducibility. The simulated data is loaded from the Simulated_data dataset. The variables Y_star, A, Z, X_star, X, and Y are extracted for further analysis. The probabilities p11 and p10 are set to 0.8 and 0.2, respectively. The number of bootstrap samples is set to 1000.
+
+## Applying the ATE.ERROR.Y Function:
+
+The ATE.ERROR.Y function is applied to estimate the ATE using the generated data and specified parameter values, where we use 1000 bootstrap samples to obtain a standard error and the resulting 95% confidence interval:
+
+```{r}
+set.seed(1)
+result <- ATE.ERROR.Y(Y_star, A, Z, X, p11, p10, bootstrap_number)
+```
+
+## Adding True ATE to the Result Summary:
+
+The True ATE is added to the result summary, and the columns are reordered to report the true ATE and the naive estimate for ATE:
+
+```{r}
+True_ATE <- True_Estimation(Y, A, Z, X)
+
+result_summary <- result$summary
+result_summary <- data.frame(True_ATE = round(True_ATE, 3), result_summary)
+print(result_summary)
+```
+
+
+## Visualizing the Distribution of ATE Estimates Using a Boxplot
+
+```{r, fig.width=6, fig.height=4, comment = NA}
+boxplot_with_true <- result$boxplot +
+  geom_hline(aes(yintercept = True_ATE, color = "true estimate"), 
+             linetype = "dashed") +
+  scale_color_manual(name = NULL, values = c("naive estimate" = "red", 
+                                             "true estimate" = "blue")) +
+  labs(title = "ATE Estimates from ATE.ERROR.Y Method", y = "ATE Estimate") +
+  theme_minimal() +
+  theme(legend.position = "right") +
+  guides(fill = guide_legend(title = NULL, order = 1),
+         color = guide_legend(title = NULL, override.aes = list(linetype = "dashed")
+                              , order = 2))
+
+print(boxplot_with_true)
+```
+
+The boxplot illustrates the distribution of the ATE estimates using the ATE.ERROR.Y method. The blue dashed line represents the true estimate of ATE, and the red dashed line represents the naive estimate of  ATE. The median of the estimated ATEs obtained from the ATE.ERROR.Y method is closer to the true estimate than the naive estimate of ATE, as expected.

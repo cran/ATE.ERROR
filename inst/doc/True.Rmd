@@ -1,0 +1,45 @@
+---
+title: "True Estimation of ATE"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{True Estimation of ATE}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+## Introduction
+
+This vignette demonstrates the usage of the `True_Estimation` function in the `ATE.ERROR` package. The `True_Estimation` function provides a method for estimating the Average Treatment Effect (ATE) using the generated values for X and Y.
+
+
+## Generating Simulated Data
+
+First, we generate our simulated data using the `data(Simulated_data)` syntax.
+
+```{r setup}
+library(ATE.ERROR)
+set.seed(1)
+data(Simulated_data)
+Y <- Simulated_data$Y
+A <- Simulated_data$T
+Z <- Simulated_data$Z
+X <- Simulated_data$X
+```
+
+## True Estimation of ATE
+
+Now we use the `True_Estimation` function.
+
+```{r}
+True_ATE <- True_Estimation(Y, A, Z, X)
+print(True_ATE)
+```
+
+The `True_Estimation` function calculates the ATE by considering the true values of X and Y and adjusting for the misclassification probabilities.

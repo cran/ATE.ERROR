@@ -1,0 +1,44 @@
+---
+title: "Naive Estimation of ATE"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Naive Estimation of ATE}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+## Introduction
+
+This vignette demonstrates the usage of the `Naive_Estimation` function in the `ATE.ERROR` package. The `Naive_Estimation` function provides a simple method for estimating ATE.
+
+## Generating Simulated Data
+
+First, we generate our simulated data using the `data(Simulated_data)` syntax.
+
+```{r setup}
+library(ATE.ERROR)
+set.seed(1)
+data(Simulated_data)
+Y_star <- Simulated_data$Y_star
+A <- Simulated_data$T
+Z <- Simulated_data$Z
+X_star <- Simulated_data$X_star
+```
+
+## Naive Estimation of ATE
+
+Now we use the `Naive_Estimation` function.
+
+```{r}
+Naive_ATE_XY <- Naive_Estimation(Y_star, A, Z, X_star)
+print(Naive_ATE_XY)
+```
+
+The `Naive_Estimation` function calculates the ATE by ignoring the difference between {X^∗, Y^∗} and {X, Y}.
